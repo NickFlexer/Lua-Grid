@@ -126,7 +126,7 @@ describe("Grid", function ()
     end)
 
     describe("Reset cell", function ()
-        it("valid cell for default value", function ()
+        it("valid cell to default value", function ()
             local g = grid.Grid(10, 5)
             g:set_cell(2, 3, "DATA")
             local res = g:reset_cell(2, 3)
@@ -134,12 +134,68 @@ describe("Grid", function ()
             assert.are.equal(g:get_cell(2, 3), grid.GRID_NIL_VALUE)
         end)
 
-        it("valid cell for custom value", function ()
+        it("valid cell to custom value", function ()
             local g = grid.Grid(10, 5, "T")
             g:set_cell(2, 3, "DATA")
             local res = g:reset_cell(2, 3)
             assert.is.True(res)
             assert.are.equal(g:get_cell(2, 3), "T")
+        end)
+
+        it("try to reset invalid cell", function ()
+            local g = grid.Grid(10, 5, "T")
+            local res = g:reset_cell(100, 100)
+            assert.is.False(res)
+        end)
+    end)
+
+    describe("Reset all cells", function ()
+        it("to default value", function ()
+            local g = grid.Grid(17, 73)
+            g:set_cell(11, 11, "Some")
+            g:reset_all()
+            assert.are.equal(g:get_cell(11, 11), grid.GRID_NIL_VALUE)
+        end)
+
+        it("to custom value", function ()
+            local g = grid.Grid(8, 2, "Base")
+            g:set_cell(1, 1, "Some")
+            g:reset_all()
+            assert.are.equal(g:get_cell(1, 1), "Base")
+        end)
+    end)
+
+    describe("Populate grid", function ()
+        it("with new data", function ()
+            local g = grid.Grid(10, 10, "Data")
+            local data = {
+                {1, 1, "foo"},
+                {2, 2, "bar"}
+            }
+            local res = g:populate(data)
+            assert.is.True(res)
+            assert.are.equal(g:get_cell(1, 1), "foo")
+            assert.are.equal(g:get_cell(2, 2), "bar")
+        end)
+
+        it("with default data", function ()
+            local g = grid.Grid(10, 10, "Data")
+            g:set_cell(1, 1, "a")
+            g:set_cell(1, 1, "b")
+            local data = {
+                {1, 1},
+                {2, 2}
+            }
+            local res = g:populate(data)
+            assert.is.True(res)
+            assert.are.equal(g:get_cell(1, 1), "Data")
+            assert.are.equal(g:get_cell(2, 2), "Data")
+        end)
+
+        it("data is not table", function ()
+            local g = grid.Grid(10, 10, "Data")
+            local res = g:populate("aaaaa")
+            assert.is.False(res)
         end)
     end)
 end)
