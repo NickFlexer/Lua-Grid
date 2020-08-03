@@ -23,8 +23,8 @@ describe("Grid", function ()
 
         it("with default data", function ()
             local g = grid.Grid(10, 10)
-            assert.are.equal(g:get_cell(2, 2), grid.GRID_NIL_VALUE)
-            assert.are.equal(g.def_value, grid.GRID_NIL_VALUE)
+            assert.are.equal(g:get_cell(2, 2), GRID_NIL_VALUE)
+            assert.are.equal(g.def_value, GRID_NIL_VALUE)
         end)
 
         it("with custom data", function ()
@@ -131,7 +131,7 @@ describe("Grid", function ()
             g:set_cell(2, 3, "DATA")
             local res = g:reset_cell(2, 3)
             assert.is.True(res)
-            assert.are.equal(g:get_cell(2, 3), grid.GRID_NIL_VALUE)
+            assert.are.equal(g:get_cell(2, 3), GRID_NIL_VALUE)
         end)
 
         it("valid cell to custom value", function ()
@@ -154,7 +154,7 @@ describe("Grid", function ()
             local g = grid.Grid(17, 73)
             g:set_cell(11, 11, "Some")
             g:reset_all()
-            assert.are.equal(g:get_cell(11, 11), grid.GRID_NIL_VALUE)
+            assert.are.equal(g:get_cell(11, 11), GRID_NIL_VALUE)
         end)
 
         it("to custom value", function ()
@@ -196,6 +196,165 @@ describe("Grid", function ()
             local g = grid.Grid(10, 10, "Data")
             local res = g:populate("aaaaa")
             assert.is.False(res)
+        end)
+    end)
+
+    describe("Get contents", function ()
+        local gr
+
+        setup(function()
+            gr = grid.Grid(2, 2)
+            gr:set_cell(1, 1, "A")
+            gr:set_cell(2, 2, "B")
+        end)
+
+        teardown(function()
+            gr = nil
+        end)
+
+        it("all grid data", function ()
+            local res = gr:get_contents()
+            assert.is.Table(res)
+            assert.is.equal(#res, 4)
+
+            assert.is.Table(res[1])
+            assert.are.same(res[1], {1, 1, "A"})
+
+            assert.is.Table(res[2])
+            assert.are.same(res[2], {1, 2, GRID_NIL_VALUE})
+
+            assert.is.Table(res[3])
+            assert.are.same(res[3], {2, 1, GRID_NIL_VALUE})
+
+            assert.is.Table(res[4])
+            assert.are.same(res[4], {2, 2, "B"})
+        end)
+
+        it("only no default data", function ()
+            local res = gr:get_contents(true)
+            assert.is.Table(res)
+            assert.is.equal(#res, 2)
+
+            assert.is.Table(res[1])
+            assert.are.same(res[1], {1, 1, "A"})
+
+            assert.is.Table(res[2])
+            assert.are.same(res[2], {2, 2, "B"})
+        end)
+    end)
+
+    describe("Get vector", function ()
+        local g
+
+        setup(function()
+            g = grid.Grid(2, 2)
+        end)
+
+        teardown(function()
+            g = nil
+        end)
+
+        it("top left", function ()
+            local x, y = g:get_vector(GRID_TOP_LEFT)
+            assert.is.equal(x, -1)
+            assert.is.equal(y, -1)
+        end)
+
+        it("top", function ()
+            local x, y = g:get_vector(GRID_TOP)
+            assert.is.equal(x, 0)
+            assert.is.equal(y, -1)
+        end)
+
+        it("top right", function ()
+            local x, y = g:get_vector(GRID_TOP_RIGHT)
+            assert.is.equal(x, 1)
+            assert.is.equal(y, -1)
+        end)
+
+        it("left", function ()
+            local x, y = g:get_vector(GRID_LEFT)
+            assert.is.equal(x, -1)
+            assert.is.equal(y, 0)
+        end)
+
+        it("center", function ()
+            local x, y = g:get_vector(GRID_CENTER)
+            assert.is.equal(x, 0)
+            assert.is.equal(y, 0)
+        end)
+
+        it("right", function ()
+            local x, y = g:get_vector(GRID_RIGHT)
+            assert.is.equal(x, 1)
+            assert.is.equal(y, 0)
+        end)
+
+        it("bottom left", function ()
+            local x, y = g:get_vector(GRID_BOTTOM_LEFT)
+            assert.is.equal(x, -1)
+            assert.is.equal(y, 1)
+        end)
+
+        it("bottom", function ()
+            local x, y = g:get_vector(GRID_BOTTOM)
+            assert.is.equal(x, 0)
+            assert.is.equal(y, 1)
+        end)
+
+        it("bottom right", function ()
+            local x, y = g:get_vector(GRID_BOTTOM_RIGHT)
+            assert.is.equal(x, 1)
+            assert.is.equal(y, 1)
+        end)
+
+        it("error", function ()
+            local res = g:get_vector("ERROR")
+            assert.is.Nil(res)
+        end)
+    end)
+
+    describe("Get neighbor", function ()
+        local gr
+
+        setup(function()
+            gr = grid.Grid(2, 2)
+            gr:set_cell(1, 1, "A")
+            gr:set_cell(2, 1, "B")
+            gr:set_cell(1, 2, "C")
+            gr:set_cell(2, 2, "D")
+        end)
+
+        teardown(function()
+            gr = nil
+        end)
+
+        it("valid cell", function ()
+            local res = gr:get_neighbor(1, 1, GRID_RIGHT)
+            assert.is.equal(res, "C")
+        end)
+
+        it("not valid cell", function ()
+            local res = gr:get_neighbor(1, 1, GRID_TOP)
+            assert.is.Nil(res)
+        end)
+    end)
+
+    describe("Get neighbors", function ()
+        it("valid base cell", function ()
+            local g = grid.Grid(3, 3, "A")
+            local res = g:get_neighbors(1, 2)
+            assert.is.Table(res)
+            assert.is.equal(#res, 8)
+            assert.are.same(res[1], {nil, nil, GRID_OUTSIDE})
+            assert.are.same(res[2], {1, 1, "A"})
+        end)
+
+        it("not valid base cell", function ()
+            local g = grid.Grid(10, 10, "A")
+            local res = g:get_neighbors(20, 20)
+            assert.is.Table(res)
+            assert.are.same(res, {})
         end)
     end)
 end)
