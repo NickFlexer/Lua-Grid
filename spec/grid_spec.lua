@@ -357,8 +357,4 @@ describe("Grid", function ()
             assert.are.same(res, {})
         end)
     end)
-
-    describe("Resize", function ()
-        -- body
-    end)
 end)
