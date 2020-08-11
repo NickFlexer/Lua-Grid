@@ -8,7 +8,6 @@ local Grid = {
         GRID_TOP = {0, -1},
         GRID_TOP_RIGHT = {1, -1},
         GRID_LEFT = {-1, 0},
-        GRID_CENTER = {0, 0},
         GRID_RIGHT = {1, 0},
         GRID_BOTTOM_LEFT = {-1 , 1},
         GRID_BOTTOM = {0, 1},
@@ -19,7 +18,7 @@ local Grid_mt = {__index = Grid}
 
 function Grid:new(size_x, size_y, def_value)
     if not size_x or type(size_x) ~= "number" or size_x < 1 or not size_y or type(size_y) ~= "number" or size_y < 1 then
-        error("Grid: size_x and size_y must be a number values equal or greater than 1")
+        error("Grid.new: size_x and size_y must be a number values equal or greater than 1")
     end
 
     self.size_x = size_x
@@ -29,7 +28,7 @@ function Grid:new(size_x, size_y, def_value)
 
     for y = 1, self.size_y   do
         for x = 1, self.size_x do
-            self._grid[(x - 1) * self.size_x + y] = self.default_value
+            self:set_cell(x, y, self.default_value)
         end
     end
 
@@ -44,6 +43,56 @@ end
 
 function Grid:get_default_value()
     return self.default_value
+end
+
+function Grid:iterate()
+    local x, y = 0, 1
+
+    return function ()
+        if x < self.size_x then
+            x = x + 1
+        else
+            if y < self.size_y  then
+                y = y + 1
+                x = 1
+            else
+                return nil
+            end
+        end
+
+        return x, y, self:get_cell(x, y)
+    end
+end
+
+function Grid:iterate_neighbor(x, y)
+    if not self:is_valid(x, y) then
+        error("Grid.iterate_neighbor: try to iterate around invalid cell index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
+    end
+
+    local iterate_table = {}
+
+    for _, val in pairs(Grid.direction) do
+        if self:is_valid(x + val[1], y + val[2]) then
+            table.insert(iterate_table, {
+                cur_x = x + val[1],
+                cur_y = y + val[2],
+                dx = val[1],
+                dy = val[2]
+            })
+        end
+    end
+
+    local index = 0
+
+    return function ()
+        if index < #iterate_table then
+            index = index + 1
+        else
+            return nil
+        end
+
+        return iterate_table[index].dx, iterate_table[index].dy, self:get_cell(iterate_table[index].cur_x, iterate_table[index].cur_y)
+    end
 end
 
 --[[
@@ -67,7 +116,7 @@ function Grid:get_cell(x, y)
     if self:is_valid(x, y) then
         return self._grid[(x - 1) * self.size_x + y]
     else
-        error("Grid: try to get cell by invalid index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
+        error("Grid.get_cell: try to get cell by invalid index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
     end
 end
 
@@ -79,17 +128,17 @@ end
 function Grid:get_cells(cells)
     local data = {}
 
-    local x, y, obj
-
     if type(cells) ~= "table" then
-        return data
+        error("Grid.get_cells: invalid cells data - must be a table value, but actual " .. type(cells))
     end
 
     for _, v in ipairs(cells) do
-        x, y = table.unpack(v)
+        local x, y = table.unpack(v)
 
         if self:is_valid(x, y) then
             table.insert(data, self:get_cell(x, y))
+        else
+            error("Grid.get_cells: try to get cell by invalid index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
         end
     end
 
@@ -100,6 +149,8 @@ end
 function Grid:set_cell(x, y, obj)
     if self:is_valid(x, y) then
         self._grid[(x - 1) * self.size_x + y] = obj
+    else
+        error("Grid.set_cell: try to set cell by invalid index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
     end
 end
 
@@ -107,19 +158,15 @@ end
 function Grid:reset_cell(x, y)
     if self:is_valid(x, y) then
         self:set_cell(x, y, self.default_value)
-
-        return true
     else
-        return false
+        error("Grid.reset_cell: try to reset cell by invalid index [ " .. tostring(x) .. " : " .. tostring(y) .. "]")
     end
 end
 
 --[[ Resets the entire grid to the default value. ]]
 function Grid:reset_all()
-    for y = 1, self.size_y do
-        for x = 1, self.size_x do
-            self:set_cell(x, y, self.default_value)
-        end
+    for x, y, _ in self:iterate() do
+        self:set_cell(x, y, self.default_value)
     end
 end
 
@@ -134,7 +181,9 @@ end
 -- the default value.
 --]]
 function Grid:populate(data)
-    if type(data) ~= "table" then return false end
+    if type(data) ~= "table" then
+        error("Grid.populate: invalid input data - must be a table value, but actual " .. type(data))
+    end
 
     for i, v in ipairs(data) do
         local x, y, obj = table.unpack(v)
@@ -161,17 +210,12 @@ end
 --]]
 function Grid:get_contents(no_default)
     local data     = {}
-    local cell_obj = nil
 
-    for x = 1, self.size_x do
-        for y = 1, self.size_y do
-            cell_obj = self:get_cell(x, y)
-
-            if no_default == true and cell_obj == self.def_value then
-                -- Do nothing, ignore default values.
-            else
-                table.insert(data, {x, y, cell_obj})
-            end
+    for x, y, val in self:iterate() do
+        if no_default and val == self.default_value then
+            -- Do nothing, ignore default values.
+        else
+            table.insert(data, {x, y, val})
         end
     end
 
@@ -287,6 +331,8 @@ function Grid:get_row(y)
         for x = 1, self.size_x do
             table.insert(row, self:get_cell(x, y))
         end
+    else
+        error("Grid.get_row: invalid row index " .. tostring(y))
     end
 
     return row
@@ -303,6 +349,8 @@ function Grid:get_column(x)
         for y = 1, self.size_y do
             table.insert(col, self:get_cell(x, y))
         end
+    else
+        error("Grid.get_column: invalid column index " .. tostring(x))
     end
 
     return col

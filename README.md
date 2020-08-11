@@ -22,6 +22,10 @@ end
 
 Exposed Methods
 
+  get_size()
+  get_default_value()
+  iterate()
+  iterate_neighbor(x, y)
   is_valid(x, y)             Checks to see if a given cell is within the grid.
   get_cell(x, y)             Gets the cell's data.
   get_cells(cells)           Gets a set of data for x,y pairs in table 'cells'.
