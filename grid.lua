@@ -199,16 +199,14 @@ end
 -- flat table suitable for feeding to populate() above.
 -- Useful for recreating a grid layout.
 -- If the 'no_default' argument is non-nil, then the
--- returned data table only contains elements who's 
+-- returned data table only contains elements who's
 -- cells are not the default value.
 --]]
 function Grid:get_contents(no_default)
     local data     = {}
 
     for x, y, val in self:iterate() do
-        if no_default and val == self.default_value then
-            -- Do nothing, ignore default values.
-        else
+        if not (no_default and val == self.default_value) then
             table.insert(data, {x, y, val})
         end
     end
@@ -238,22 +236,22 @@ end
 -- representing one of the 8 neighbors for the given
 -- x,y cell. Each element of the returned table will consist
 -- of the x,y cell pair, plus the data stored there, suitable
--- for use of the populate() method. If the neighbor cell is 
--- outside the grid, then {nil, nil, GRID_OUTSIDE} is used for 
+-- for use of the populate() method. If the neighbor cell is
+-- outside the grid, then {nil, nil, GRID_OUTSIDE} is used for
 -- that value.
 -- If the given x,y values are not sane, an empty table
 -- is returned instead.
 --]]
 function Grid:get_neighbors(x, y)
     local data = {}
-    local gx, gy, vx, vy
+    local vx, vy
 
     if not self:is_valid(x, y) then return data end
 
     --[[
     -- The vectors used are x,y pairs between -1 and +1
-    -- for the given x,y cell. 
-    -- IE: 
+    -- for the given x,y cell.
+    -- IE:
     --     (-1, -1) (0, -1) (1, -1)
     --     (-1,  0) (0,  0) (1,  0)
     --     (-1,  1) (0,  1) (1,  1)
@@ -265,9 +263,7 @@ function Grid:get_neighbors(x, y)
             vx = x + gx
             vy = y + gy
 
-            if gx == 0 and gy == 0 then
-                -- Do nothing
-            elseif self:is_valid(vx, vy) then
+            if self:is_valid(vx, vy) and not (gx == 0 and gy == 0) then
                 table.insert(data, {vx, vy, self:get_cell(vx, vy)})
             end
         end
@@ -345,13 +341,13 @@ function Grid:get_column(x)
 end
 
 --[[
--- This method traverses a line of cells, from a given x,y 
+-- This method traverses a line of cells, from a given x,y
 -- going in 'vector' direction. The vector arg is one of the
--- GRID_* traversal constants. This will return a table of 
--- data of the cells along the traversal path or nil if 
+-- GRID_* traversal constants. This will return a table of
+-- data of the cells along the traversal path or nil if
 -- the original x,y is not valid or if the vector is not one
 -- of the constant values.
--- In the returned table, each element will be in the format 
+-- In the returned table, each element will be in the format
 -- of {x, y, obj}, suitable for populate().
 --]]
 function Grid:traverse(x, y, vector)
