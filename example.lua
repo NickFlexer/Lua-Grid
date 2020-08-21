@@ -6,10 +6,14 @@ local Grid = require "grid"
 
 
 function main()
-    local grid = Grid(2, 5, "X")
-    grid:set_cell(2, 4, "O")
+    local grid = Grid(5, 3, "X")
+    grid:set_cell(2, 2, "O")
 
     local size_x, size_y = grid:get_size()
+
+    print("Grid size: X = " .. tostring(size_x) .. " Y = " .. tostring(size_y))
+    print("\n")
+    print("Grid content is:")
 
     for x, _, cell in grid:iterate() do
         io.write(tostring(cell) .. " ")
@@ -17,10 +21,6 @@ function main()
         if x == size_x then
             io.write("\n")
         end
-    end
-
-    for d_x, d_y, cell in grid:iterate_neighbor(1, 1) do
-        print(d_x, d_y, cell)
     end
 end
 

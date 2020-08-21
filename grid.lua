@@ -104,11 +104,7 @@ function Grid:is_valid(x, y)
         return false
     end
 
-    if 0 < x and x <= self.size_x and 0 < y and y <= self.size_y then
-        return true
-    else
-        return false
-    end
+    return  0 < x and x <= self.size_x and 0 < y and y <= self.size_y
 end
 
 --[[ Gets the data in a given x,y cell. ]]
@@ -129,7 +125,7 @@ function Grid:get_cells(cells)
     local data = {}
 
     if type(cells) ~= "table" then
-        error("Grid.get_cells: invalid cells data - must be a table value, but actual " .. type(cells))
+        error("Grid.get_cells: invalid cells data - must be a table value, but actual is " .. type(cells))
     end
 
     for _, v in ipairs(cells) do
@@ -185,19 +181,17 @@ function Grid:populate(data)
         error("Grid.populate: invalid input data - must be a table value, but actual " .. type(data))
     end
 
-    for i, v in ipairs(data) do
+    for _, v in ipairs(data) do
         local x, y, obj = table.unpack(v)
 
         if self:is_valid(x, y) then
-            if obj == nil then 
+            if obj == nil then
                 obj = self.default_value
             end
 
             self:set_cell(x, y, obj)
         end
     end
-
-    return true
 end
 
 --[[
@@ -291,33 +285,27 @@ end
 --]]
 function Grid:resize(newx, newy)
     if (type(newx) ~= "number" or newx == nil) or (type(newy) ~= "number" or newy == nil) then
-        return false
+        error("Grid.resize: size_x and size_y must be a number values equal or greater than 1")
     end
-
-    local c, x, y
 
     -- Save old data.
-    c = self:get_contents()
-
-    -- Destroy/reset the internal grid.
-    self._grid = {}
-
-    for x = 1, newx do
-        self._grid[x] = {}
-
-        for y = 1, newy do
-            table.insert(self._grid[x], self.default_value)
-        end
-    end
+    local contents = self:get_contents()
 
     -- Set the new sizes.
     self.size_x = newx
     self.size_y = newy
 
-    -- Restore the contents.
-    self:populate(c)
+    -- Destroy/reset the internal grid.
+    self._grid = {}
 
-    return true
+    for y = 1, self.size_y   do
+        for x = 1, self.size_x do
+            self:set_cell(x, y, self.default_value)
+        end
+    end
+
+    -- Restore the contents.
+    self:populate(contents)
 end
 
 --[[
