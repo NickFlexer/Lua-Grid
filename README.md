@@ -1,5 +1,6 @@
 # Lua-Grid
 [![Build Status](https://travis-ci.org/NickFlexer/Lua-Grid.svg?branch=master)](https://travis-ci.org/NickFlexer/Lua-Grid)
+
 Grid Class for Games or whatever else you can think of.
 
 The Grid object is data agnostic.  It doesn't care what kind of data you store in a cell. This is meant to be, for abstraction's sake. You could even store functions.
