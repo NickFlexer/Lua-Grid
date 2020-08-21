@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/NickFlexer/Lua-Grid.svg?branch=master)](https://travis-ci.org/NickFlexer/Lua-Grid)
+
 Grid Class for Games or whatever else you can think of.
 
 By Randy Carnahan, released to the Public Domain.
