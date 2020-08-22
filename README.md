@@ -1,5 +1,5 @@
 # Lua-Grid
-[![Build Status](https://travis-ci.org/NickFlexer/Lua-Grid.svg?branch=master)](https://travis-ci.org/NickFlexer/Lua-Grid)
+[![Build Status](https://travis-ci.org/NickFlexer/Lua-Grid.svg?branch=master)](https://travis-ci.org/NickFlexer/Lua-Grid) [![Coverage Status](https://coveralls.io/repos/github/NickFlexer/Lua-Grid/badge.svg)](https://coveralls.io/github/NickFlexer/Lua-Grid)
 
 Grid Class for Games or whatever else you can think of.
 
@@ -82,6 +82,7 @@ Returns:
 ---
 **```:iterate_neighbor(x, y)```**
 Iterator to traverce all neighbors of given cell
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -93,6 +94,7 @@ Returns:
 ---
 **```:is_valid(x, y)```**
 Checks to see if a given cell is within the grid.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -102,6 +104,7 @@ Returns:
 ---
 **```:get_cell(x, y)```**
 Gets the cell's data.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -111,6 +114,7 @@ Returns:
 ---
 **```:get_cells(cells)```**
 Gets a set of data for x,y pairs in table 'cells'.
+
 Arguments:
 * ```cells``` ```(table)``` - Table of cells position pairs ```{{1, 1}, {2, 2}, ...}```
 
@@ -119,6 +123,7 @@ Returns:
 ---
 **```:set_cell(x, y, obj)```**
 Sets the cell's data to the given object.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -126,6 +131,7 @@ Arguments:
 ---
 **```:reset_cell(x, y)```**
 Resets the cell to the default data.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -137,12 +143,14 @@ Resets the entire grid to the default data.
 ---
 **```:populate(data)```**
 Given a data-filled table, will set multiple cells.
+
 Arguments:
 * ```data``` ```(table)``` - Table of new cells data ```{{1, 1, "A"}, {2, 2, "B"}, ...}```
 
 ---
 **```:get_contents([no_default])```**
 Returns a flat table of data suitable for ```:populate()```
+
 Arguments:
 * ```no_default``` ```(boolean)``` - If the argument is ```true```, then the returned data table only contains elements who's cells are not the default value. Defaults to ```false```
 
@@ -152,6 +160,7 @@ Returns:
 ---
 **```:get_neighbor(x, y, vector)```**
 Gets a x,y's neighbor in vector direction.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -163,6 +172,7 @@ Returns:
 ---
 **```:get_neighbors(x, y)```**
 Returns a table of the given's cell's all neighbors.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
@@ -173,6 +183,7 @@ Returns:
 ---
 **```:resize(newx, newy)```**
 Resizes the grid. Can lose data if new grid is smaller.
+
 Arguments:
 * ```newx``` ```(number)``` - New Grid width
 * ```newy``` ```(number)``` - New Grid height
@@ -180,6 +191,7 @@ Arguments:
 ---
 **```:get_row(x)```**
 Gets the row for the given x value.
+
 Arguments:
 * ```x``` ```(number)``` - The row number
 
@@ -189,6 +201,7 @@ Returns:
 ---
 **```:get_column(y)```**
 Gets the column for the given y value
+
 Arguments:
 * ```y``` ```(number)``` - The column number
 
@@ -198,6 +211,7 @@ Returns:
 ---
 **```:traverse(x, y, vector)```**
 Returns all cells start at x,y in vector direction.
+
 Arguments:
 * ```x``` ```(number)``` - X position of cell
 * ```y``` ```(number)``` - Y position of cell
