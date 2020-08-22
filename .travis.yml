@@ -24,4 +24,5 @@ script:
   - busted --verbose --coverage
 
 after_success:
-  - luacov-coveralls -e $TRAVIS_BUILD_DIR/lua_install
+  - luacov-coveralls -i grid.lua -e spec  -e $TRAVIS_BUILD_DIR/lua_install
+  
