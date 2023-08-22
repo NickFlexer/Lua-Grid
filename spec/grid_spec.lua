@@ -7,8 +7,8 @@ describe("Grid", function ()
     local Grid = require "grid"
 
     describe("Initialize", function ()
-        it("call 'new' method", function ()
-            local gr = Grid:new(10, 20)
+        it("simple", function ()
+            local gr = Grid(10, 20)
             assert.is.Table(gr)
         end)
 
@@ -34,6 +34,13 @@ describe("Grid", function ()
             local g = Grid(10, 10, "some")
             assert.are.equal(g:get_cell(2, 2), "some")
             assert.are.equal(g:get_default_value(), "some")
+        end)
+
+        it("multiple instance", function ()
+            local g1 = Grid(10, 10, "some")
+            local g2 = Grid(10, 10, "another")
+            assert.are.equal(g1:get_cell(2, 2), "some")
+            assert.are.equal(g2:get_cell(2, 2), "another")
         end)
     end)
 

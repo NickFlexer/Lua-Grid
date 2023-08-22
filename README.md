@@ -38,10 +38,6 @@ Create new Grid object
 ```lua
 local grid = Grid(10, 5, "X")
 ```
-or
-```lua
-local grid = Grid:new(10, 5, "X")
-```
 
 Arguments:
 * ```x``` ```(number)``` - Grid width
